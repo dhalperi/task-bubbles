@@ -1,0 +1,29 @@
+application: task-bubbles
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /favicon\.ico
+  expiration: "7d"
+  static_files: static/images/favicon.ico
+  upload: static/images/favicon\.ico
+
+- url: /robots\.txt
+  expiration: "7d"
+  static_files: static/robots.txt
+  upload: static/robots\.txt
+
+- url: /css
+  static_dir: static/css
+
+- url: /js
+  static_dir: static/js
+
+- url: .*
+  script: tasks.app
+
+libraries:
+- name: jinja2
+  version: latest
