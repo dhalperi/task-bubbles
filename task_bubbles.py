@@ -60,7 +60,7 @@ class MainPage(webapp2.RequestHandler):
             value = min(value, 20)
             value = 1.0 / (1.0 + value)
             text = t.description
-            out_tasks.append((value, text))
+            out_tasks.append((text, value))
 
         # Fill in the template values
         template_values = { 'tasks' : out_tasks }

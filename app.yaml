@@ -21,6 +21,9 @@ handlers:
 - url: /js
   static_dir: static/js
 
+- url: /new
+  script: new_task.app
+
 - url: .*
   script: task_bubbles.app
 
