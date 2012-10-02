@@ -8,6 +8,14 @@
   </head>
   <body>
     <div id="tasks"></div>
+    <script type="text/javascript">
+    task_list = {
+    	"name" : "tasks",
+    	"children" : [{% for task in tasks %}
+    	    { "name": "{{task[1]}}", "size": {{task[0]}} },
+    	{% endfor %}]
+    };
+    </script>
     <script type="text/javascript" src="js/tasks.js"></script>
   </body>
 </html>

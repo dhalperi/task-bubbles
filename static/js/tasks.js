@@ -17,9 +17,7 @@ var vis = d3.select("#tasks").append("svg")
   .append("g")
     .attr("transform", "translate(2, 2)");
 
-d3.json("/js/tasks.json", function(json) {
-  console.log(json);
-  var node = vis.data([json]).selectAll("g.node")
+  var node = vis.data([task_list]).selectAll("g.node")
       .data(pack.nodes)
     .enter().append("g")
       .attr("class", function(d) { return d.children ? "node" : "leaf node"; })
@@ -37,4 +35,3 @@ d3.json("/js/tasks.json", function(json) {
       .attr("text-anchor", "middle")
       .attr("dy", "0.5em")
       .text(function(d) { return d.name.substring(0, d.r / 3); });
-});

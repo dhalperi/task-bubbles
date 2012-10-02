@@ -22,7 +22,7 @@ handlers:
   static_dir: static/js
 
 - url: .*
-  script: tasks.app
+  script: task_bubbles.app
 
 libraries:
 - name: jinja2
