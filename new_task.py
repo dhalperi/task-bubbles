@@ -35,8 +35,9 @@ class MainPage(webapp2.RequestHandler):
             return
 
         description = self.request.get('description')
-        ends = self.request.get('ends')
-        t = Task(user=user, description=description, ends=datetime.datetime.now()+datetime.timedelta(hours=24))
+        ends = int(self.request.get('ends'))
+        end_time = datetime.datetime.utcfromtimestamp(ends/1000.0);
+        t = Task(user=user, description=description, ends=end_time)
         t.put()
         self.redirect('.')
 
