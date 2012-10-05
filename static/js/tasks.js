@@ -17,21 +17,21 @@ var vis = d3.select("#tasks").append("svg")
   .append("g")
     .attr("transform", "translate(2, 2)");
 
-  var node = vis.data([task_list]).selectAll("g.node")
-      .data(pack.nodes)
-    .enter().append("g")
-      .attr("class", function(d) { return d.children ? "node" : "leaf node"; })
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+var node = vis.data([task_list]).selectAll("g.node")
+    .data(pack.nodes)
+  .enter().append("g")
+    .attr("class", function(d) { return d.children ? "node" : "leaf node"; })
+    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
-  node.append("title")
-      .text(function(d) { return d.name + (d.children ? "" : ": " + format(d.size)); });
+node.append("title")
+    .text(function(d) { return d.name + (d.children ? "" : ": " + format(d.size)); });
 
-  node.append("circle")
-      .attr("r", function(d) { return d.r; })
-      .style("fill", function(d) { return d.children ?
+node.append("circle")
+    .attr("r", function(d) { return d.r; })
+    .style("fill", function(d) { return d.children ?
 	      			   "none" : fill(d.value); });
 
-  node.filter(function(d) { return !d.children; }).append("text")
-      .attr("text-anchor", "middle")
-      .attr("dy", "0.5em")
-      .text(function(d) { return d.name.substring(0, d.r / 3); });
+node.filter(function(d) { return !d.children; }).append("text")
+    .attr("text-anchor", "middle")
+    .attr("dy", "0.5em")
+    .text(function(d) { return d.name.substring(0, d.r / 3); });
