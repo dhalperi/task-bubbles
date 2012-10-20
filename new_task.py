@@ -14,17 +14,8 @@ jinja_environment = jinja2.Environment(
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
-        # First, see if the user is logged in
-        user = users.get_current_user()
-        if not user:
-            self.redirect(users.create_login_url(self.request.uri))
-            return
-        
-        # Fill in the template values
-        template_values = { }
-        template = jinja_environment.get_template('new_task.html')
-        self.response.out.write(template.render(template_values))
-        
+        self.redirect("/")
+
     def post(self):
         # First, see if the user is logged in
         user = users.get_current_user()
@@ -39,5 +30,4 @@ class MainPage(webapp2.RequestHandler):
         t.put()
         self.redirect('.')
 
-app = webapp2.WSGIApplication([('/new', MainPage)],
-                              debug=True)
+app = webapp2.WSGIApplication([('/new', MainPage)], debug=True)
