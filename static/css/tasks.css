@@ -13,6 +13,13 @@
   font: 12px sans-serif;
 }
 
+#tasks div.newbutton  {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  font-size: 62.5%;
+}
+
 #tasks div.credit  {
   position: absolute;
   left: 4px;

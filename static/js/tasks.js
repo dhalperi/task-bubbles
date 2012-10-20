@@ -34,4 +34,5 @@ node.append("circle")
 node.filter(function(d) { return !d.children; }).append("text")
     .attr("text-anchor", "middle")
     .attr("dy", "0.5em")
-    .text(function(d) { return d.name.substring(0, d.r / 3); });
+    .text(function(d) { return d.name; })
+    .style("font-size", function(d) { return 1.5*(2*d.r)/d.name.length + "px";});
