@@ -85,7 +85,7 @@
 			var time_string = $( "#task-time" ).val();
 			var d = Date.parse(date_string + " " + time_string);
 			var now = new Date();
-			if (d.isNan || (d < now)) {
+			if (isNaN(d) || (d < now)) {
 				return false;
 			}
 			
