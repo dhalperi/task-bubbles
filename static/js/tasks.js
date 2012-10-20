@@ -24,7 +24,7 @@ var node = vis.data([task_list]).selectAll("g.node")
     .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
 node.append("title")
-    .text(function(d) { return d.name + (d.children ? "" : ": " + format(d.size)); });
+    .text(function(d) { return d.name + "\n<due date>"; });
 
 node.append("circle")
     .attr("r", function(d) { return d.r; })

@@ -9,8 +9,6 @@ import os
 
 from task_db import Task
 
-#import parsedatetime # last
-
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
