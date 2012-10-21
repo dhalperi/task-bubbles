@@ -9,14 +9,14 @@
 <body>
   <div id="tasks">
     <div class="credit">
-      Concept by <a href="http://homes.cs.washington.edu/~ajaffe">Alex Jaffe</a>.
+      Based on a concept by <a href="http://homes.cs.washington.edu/~ajaffe">Alex Jaffe</a>.
     </div>
     <script type="text/javascript">
     task_list = {
-    	"name" : "tasks",
-    	"children" : [{% for task in tasks %}
-    	    { "name": "{{task[0]}}", "size": {{task[1]}} },
-    	{% endfor %}]
+      "name" : "tasks",
+      "children" : [{% for task in tasks %}
+        { "name": "{{task[0]}}", "size": {{task[1]}}, "id": "{{task[2]}}" },
+      {% endfor %}]
     };
     </script>
     <script type="text/javascript" src="js/d3.v2.min.js"></script>
@@ -24,78 +24,113 @@
     <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.9.0.custom.min.js"></script>
     <script type="text/javascript">
-		$(function(){
+      $(function(){
+        // New task dialog
+        $('#new-task-dialog').dialog({
+          autoOpen: false,
+          modal: true,
+          width: 350,
+          buttons: {
+            "Ok": function() {
+                if (validateNewForm()) {
+                  $( '#new_task_form' ).submit();
+                  $(this).dialog("close");
+                }
+              },
+            "Cancel": function() {
+                resetForm('new_task_form');
+                $(this).dialog("close");
+              }
+          }
+        });
 
-			// Dialog
-			$('#dialog').dialog({
-				autoOpen: false,
-				modal: true,
-				width: 350,
-				buttons: {
-					"Ok": function() {
-						if (validateForm()) {
-							$( '#new_task_form' ).submit();
-							$(this).dialog("close");
-						}
-					},
-					"Cancel": function() {
-						$(this).dialog("close");
-					}
-				}
-			});
+        // Complete task dialog
+        $('#complete-task-dialog').dialog({
+          autoOpen: false,
+          modal: true,
+          width: 350,
+          buttons: {
+            "Yes": function() {
+                $( '#complete_task_form' ).submit();
+                $(this).dialog("close");
+              },
+            "Cancel": function() {
+                resetForm('complete_task_form');
+                $(this).dialog("close");
+              }
+          }
+        });
 
-			// Dialog Link
-			$('#dialog_link').click(function(){
-				$('#dialog').dialog('open');
-				return false;
-			});
+        // Dialog Link
+        $('#dialog_link').click(function(){
+          $('#new-task-dialog').dialog('open');
+          return false;
+        });
+        
+        //hover states on the static widgets
+        $('#dialog_link').hover(
+          function() { $(this).addClass('ui-state-hover'); },
+          function() { $(this).removeClass('ui-state-hover'); }
+        );
 
-			//hover states on the static widgets
-			$('#dialog_link').hover(
-				function() { $(this).addClass('ui-state-hover'); },
-				function() { $(this).removeClass('ui-state-hover'); }
-			);
+        $( "#new-task" )
+          .button({
+            icons : {
+              primary : "ui-icon-plus",
+            },
+            text : false
+          }).click(function() {
+            $( "#new-task-dialog" ).dialog( "open" );
+          });
 
-			$( "#new-task" )
-				.button({
-	    			icons : {
-	    	    		primary : "ui-icon-plus",
-	    			},
-	    			text : false
-	  			}).click(function() {
-					$( "#dialog" ).dialog( "open" );
-				});
+        // The date picker inside the dialog
+        $( "#task-date" ).datepicker();
+        // Set the date and time to 1 hour from now.
+        var curTime = new Date().getTime(),
+            oneHour = new Date(curTime + 60*60*1000);
+        oneHour.setMinutes(0);
+        oneHour.setSeconds(0);
+        oneHour.setMilliseconds(0);
+        var dateString = (oneHour.getMonth()+1) + "/" + oneHour.getDate() + "/" + oneHour.getFullYear(),
+            timeString = oneHour.getHours() + ":00";
+        $( "#task-date" ).attr("value", dateString);
+        $( "#task-time" ).attr("value", timeString);
+      });
+    
+      function resetForm(id) {
+        $('#'+id).each(function(){
+          this.reset();
+        });
+      }
+        
+      function validateNewForm() {
+        var description = $( "#description" ).val();
+        var date_string = $( "#task-date" ).val();
+        var time_string = $( "#task-time" ).val();
+        var d = Date.parse(date_string + " " + time_string);
+        var now = new Date();
+        if (isNaN(d) || (d < now)) {
+          return false;
+        }
+        
+        if (description.length == 0) {
+          return false;
+        }
+            
+        $( "#ends" ).attr("value", d);
+            
+        return true;
+      };
+      
+      function completeTask(id) {
+        $('#complete_task_id').attr("value", id);
+        $('#complete-task-dialog').dialog('open');
+        return false;
+      };
 
-			// The date picker inside the dialog
-			$( "#task-date" ).datepicker();
-			// Set the date and time to 1 hour from now.
-			var curTime = new Date().getTime(),
-			    oneHour = new Date(curTime + 60*60*1000);
-			oneHour.setMinutes(0);
-			oneHour.setSeconds(0);
-			oneHour.setMilliseconds(0);
-			var dateString = (oneHour.getMonth()+1) + "/" + oneHour.getDate() + "/" + oneHour.getFullYear(),
-			    timeString = oneHour.getHours() + ":00";
-			$( "#task-date" ).attr("value", dateString);
-			$( "#task-time" ).attr("value", timeString);
-		});
-		
-		function validateForm() {
-			var date_string = $( "#task-date" ).val();
-			var time_string = $( "#task-time" ).val();
-			var d = Date.parse(date_string + " " + time_string);
-			var now = new Date();
-			if (isNaN(d) || (d < now)) {
-				return false;
-			}
-			
-			$( "#ends" ).attr("value", d);
-			
-			return true;
-		};
-	</script>
-    <div id="dialog" title="New task">
-      <form id="new_task_form" action="/new" method="post" onSubmit="return validateForm();">
+    </script>
+    <div id="new-task-dialog" title="New task">
+      <form id="new_task_form" action="/new" method="post" onSubmit="return validateNewForm();">
         <p>
           <label for="task-name">Name:</label> <input type="text" name="description" id="description" placeholder="Do laundry" />
         </p>
@@ -106,6 +141,12 @@
           <label for="task-time">Time:</label> <input type="text" id="task-time" />
         </p>
         <input type="hidden" name="ends" id="ends" />
+      </form>
+    </div>
+    <div id="complete-task-dialog" title="Task complete?">
+      <form id="complete_task_form" action="/del" method="post">
+        <p>Is this task complete?</p>
+        <input type="hidden" id="complete_task_id" name="id" />
       </form>
     </div>
     <div class="newbutton">

@@ -52,6 +52,9 @@ class MainPage(webapp2.RequestHandler):
         if first_delta < one_hour:
             first_time = first_time - one_hour
             first_delta = one_hour
+        else:
+          first_time = first_time - one_hour
+          first_delta = one_hour
         
         out_tasks = []
         for t in tasks:
@@ -60,7 +63,7 @@ class MainPage(webapp2.RequestHandler):
             value = min(value, 20)
             value = 1.0 / (1.0 + value)
             text = t.description
-            out_tasks.append((text, value))
+            out_tasks.append((text, value, str(t.key())))
 
         # Fill in the template values
         template_values = { 'tasks' : out_tasks }
