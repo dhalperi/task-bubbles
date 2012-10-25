@@ -24,9 +24,6 @@ handlers:
 - url: /new
   script: new_task.app
 
-- url: /del
-  script: del_task.app
-
 - url: /task.*
   script: task.app
 
