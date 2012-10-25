@@ -27,6 +27,9 @@ handlers:
 - url: /del
   script: del_task.app
 
+- url: /task.*
+  script: task.app
+
 - url: .*
   script: task_bubbles.app
 

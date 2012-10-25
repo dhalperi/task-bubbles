@@ -11,14 +11,6 @@
     <div class="credit">
       Based on a concept by <a href="http://homes.cs.washington.edu/~ajaffe">Alex Jaffe</a>.
     </div>
-    <script type="text/javascript">
-    task_list = {
-      "name" : "tasks",
-      "children" : [{% for task in tasks %}
-        { "name": "{{task[0]}}", "size": {{task[1]}}, "id": "{{task[2]}}" },
-      {% endfor %}]
-    };
-    </script>
     <script type="text/javascript" src="js/d3.v2.min.js"></script>
     <script type="text/javascript" src="js/tasks.js"></script>
     <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
@@ -51,7 +43,13 @@
           width: 350,
           buttons: {
             "Yes": function() {
-                $( '#complete_task_form' ).submit();
+                var id = $('#complete-task-id').val();
+                $.ajax({
+                  url: 'task/' + id,
+                  type: 'DELETE',
+                  success: function() { redrawVisualization(id); }
+                });
+                
                 $(this).dialog("close");
               },
             "Cancel": function() {
@@ -123,7 +121,7 @@
       };
       
       function completeTask(id) {
-        $('#complete_task_id').attr("value", id);
+        $('#complete-task-id').attr("value", id);
         $('#complete-task-dialog').dialog('open');
         return false;
       };
@@ -144,10 +142,8 @@
       </form>
     </div>
     <div id="complete-task-dialog" title="Task complete?">
-      <form id="complete_task_form" action="/del" method="post">
         <p>Is this task complete?</p>
-        <input type="hidden" id="complete_task_id" name="id" />
-      </form>
+        <input type="hidden" id="complete-task-id"/> 
     </div>
     <div class="newbutton">
       <button id="new-task">New task</button>
