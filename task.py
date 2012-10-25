@@ -4,15 +4,9 @@ from google.appengine.api import users
 from google.appengine.ext import db
 
 import datetime
-import jinja2
 import json
-import math
-import os
 
 from task_db import Task
-
-jinja_environment = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class TaskHandler(webapp2.RequestHandler):
     def get(self):
@@ -44,17 +38,13 @@ class TaskHandler(webapp2.RequestHandler):
             first_task = tasks.get()
 
         # Earliest ending time    
-        first_time = first_task.ends
         now = datetime.datetime.now()
-        one_hour = datetime.timedelta(hours=1)
-        # one_minute = datetime.timedelta(minutes=1)
-        first_delta = first_time - now
-        if first_delta < one_hour:
-            first_time = first_time - one_hour
+        first_time = now
+        first_delta = first_task.ends - first_time
+        if first_delta.total_seconds() <= 0:
+            one_hour = datetime.timedelta(hours=1)
+            first_time = first_task.ends - one_hour
             first_delta = one_hour
-        else:
-          first_time = first_time - one_hour
-          first_delta = one_hour
         
         out_tasks = []
         for t in tasks:
