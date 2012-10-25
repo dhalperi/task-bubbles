@@ -1,8 +1,0 @@
-{
-  "name": "tasks",
-  "children": [
-    {"name": "One Hour", "size": 1.0},
-    {"name": "One Day", "size": 0.5},
-    {"name": "One Year", "size": 0.1}
-  ]
-}
