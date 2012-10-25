@@ -9,8 +9,8 @@ $(function() {
                 if (validateNewForm()) {
                     $.ajax({
                         url : 'task?description='
-                            + $('#new-task-description').val()
-                            + '&ends=' + $('#new-task-ends').val(),
+                            + encodeURIComponent($('#new-task-description').val())
+                            + '&ends=' + encodeURIComponent($('#new-task-ends').val()),
                         type : 'POST',
                         success : function() {
                             redrawVisualization();
@@ -36,7 +36,7 @@ $(function() {
             "Yes" : function() {
                 var id = $('#complete-task-id').val();
                 $.ajax({
-                    url : 'task/' + id,
+                    url : 'task/' + encodeURIComponent(id),
                     type : 'DELETE',
                     success : function() {
                         redrawVisualization();
