@@ -59,9 +59,8 @@ class TaskHandler(webapp2.RequestHandler):
         out_tasks = []
         for t in tasks:
             delta = t.ends - first_time
-            value = math.log(delta.total_seconds() / first_delta.total_seconds())
-            value = min(value, 20)
-            value = 1.0 / (1.0 + value)
+            value = (delta.total_seconds() / first_delta.total_seconds()) ** 0.75
+            value = 1.0 / value
             text = t.description
             out_tasks.append({ "name" : text, "size" : value, "task_id" : str(t.key())})
         
