@@ -71,7 +71,7 @@ function styleNode(node, isTransition) {
 
     title.text(function(d) { return d.name + "\n<due date>"; });
 
-	circle.attr("r", function(d) { console.log(d.r, d.value); return d.r; })
+	circle.attr("r", function(d) { return d.r; })
 	    .style("fill", function(d) { return d.children ?
 		      			   "none" : fill(d.value); });
 	
