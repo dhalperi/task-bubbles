@@ -21,9 +21,6 @@ handlers:
 - url: /js
   static_dir: static/js
 
-- url: /new
-  script: new_task.app
-
 - url: /task.*
   script: task.app
 

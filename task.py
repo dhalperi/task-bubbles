@@ -19,8 +19,8 @@ class TaskHandler(webapp2.RequestHandler):
         # First, see if the user is logged in
         user = users.get_current_user()
         if not user:
-            self.redirect(users.create_login_url(self.request.uri))
-            return
+          self.error(401)
+          return
         
         # Get the tasks from the database
         tasks = db.GqlQuery("SELECT * "
@@ -47,7 +47,7 @@ class TaskHandler(webapp2.RequestHandler):
         first_time = first_task.ends
         now = datetime.datetime.now()
         one_hour = datetime.timedelta(hours=1)
-        #one_minute = datetime.timedelta(minutes=1)
+        # one_minute = datetime.timedelta(minutes=1)
         first_delta = first_time - now
         if first_delta < one_hour:
             first_time = first_time - one_hour
@@ -66,13 +66,33 @@ class TaskHandler(webapp2.RequestHandler):
             out_tasks.append({ "name" : text, "size" : value, "task_id" : str(t.key())})
         
         self.response.out.write(json.dumps({"name" : "tasks", "children" : out_tasks}))
+  
+    def post(self):
+        # First, see if the user is logged in
+        user = users.get_current_user()
+        if not user:
+          self.error(401)
+          return
+
+        description = self.request.get('description')
+        if description is None:
+          self.error(400)
+          return
+        ends = int(self.request.get('ends'))
+        if ends is None:
+          self.error(400)
+          return
+        end_time = datetime.datetime.utcfromtimestamp(ends / 1000.0);
+        t = Task(user=user, description=description, ends=end_time)
+        t.put()
+        self.response.set_status(200)
 
     def delete(self, taskid=None):
         # First, see if the user is logged in
         user = users.get_current_user()
         if not user:
-            self.redirect(users.create_login_url(self.request.uri))
-            return
+          self.error(401)
+          return
           
         # If no arguments, do something
         if taskid is None:

@@ -23,7 +23,7 @@ d3.json("/task", function(json) {
 	visualizeIt();
 });
 
-function redrawVisualization(id) {
+function redrawVisualization() {
 	d3.json("/task", function(json) {
 		task_list = json;
 		

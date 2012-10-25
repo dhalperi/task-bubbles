@@ -17,22 +17,23 @@
     <script type="text/javascript" src="js/jquery-ui-1.9.0.custom.min.js"></script>
     <script type="text/javascript" src="js/tasks-ui.js"></script>
     <div id="new-task-dialog" title="New task">
-      <form id="new_task_form" action="/new" method="post" onSubmit="return validateNewForm();">
+      <form id="new-task-form">
         <p>
-          <label for="task-name">Name:</label> <input type="text" name="description" id="description" placeholder="Do laundry" />
+          <label for="new-task-description">Name:</label> <input type="text" name="description" id="new-task-description"
+            placeholder="Do laundry" />
         </p>
         <p>
-          <label for="task-date">Date:</label> <input type="text" id="task-date" />
+          <label for="new-task-date">Date:</label> <input type="text" id="new-task-date" />
         </p>
         <p>
-          <label for="task-time">Time:</label> <input type="text" id="task-time" />
+          <label for="new-task-time">Time:</label> <input type="text" id="new-task-time" />
         </p>
-        <input type="hidden" name="ends" id="ends" />
+        <input type="hidden" name="ends" id="new-task-ends" />
       </form>
     </div>
     <div id="complete-task-dialog" title="Task complete?">
-        <p>Is this task complete?</p>
-        <input type="hidden" id="complete-task-id"/> 
+      <p>Is this task complete?</p>
+      <input type="hidden" id="complete-task-id" />
     </div>
     <div class="newbutton">
       <button id="new-task">New task</button>
