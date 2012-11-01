@@ -26,7 +26,3 @@ handlers:
 
 - url: .*
   script: task_bubbles.app
-
-libraries:
-- name: jinja2
-  version: latest
