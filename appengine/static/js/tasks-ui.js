@@ -1,29 +1,43 @@
 $(function() {
+    var newTaskDialogOk = function() {
+        if (validateNewForm()) {
+            $.ajax({
+                url : 'task?description='
+                    + encodeURIComponent($('#new-task-description').val())
+                    + '&ends=' + encodeURIComponent($('#new-task-ends').val()),
+                type : 'POST',
+                success : function() {
+                    redrawVisualization();
+                }
+            });
+            $('#new-task-dialog').dialog("close");
+        }
+    };
+    var newTaskDialogCancel = function() {
+        $('#new-task-dialog').dialog("close");
+    };
     // New task dialog
     $('#new-task-dialog').dialog({
         autoOpen : false,
         modal : true,
         width : 350,
         buttons : {
-            "Ok" : function() {
-                if (validateNewForm()) {
-                    $.ajax({
-                        url : 'task?description='
-                            + encodeURIComponent($('#new-task-description').val())
-                            + '&ends=' + encodeURIComponent($('#new-task-ends').val()),
-                        type : 'POST',
-                        success : function() {
-                            redrawVisualization();
-                        }
-                    });
-                    $(this).dialog("close");
-                    resetForm('new-task-form');
-                }
-            },
-            "Cancel" : function() {
-                resetForm('new-task-form');
-                $(this).dialog("close");
-            }
+            "Ok" : newTaskDialogOk,
+            "Cancel" : newTaskDialogCancel
+        },
+        open : function () {
+            // Set the date and time to 1 hour from now.
+            var curTime = new Date().getTime(), oneHour = new Date(
+                    curTime + 60 * 60 * 1000);
+            oneHour.setMinutes(0);
+            oneHour.setSeconds(0);
+            oneHour.setMilliseconds(0);
+            var dateString = (oneHour.getMonth() + 1) + "/" + oneHour.getDate() + "/"
+                    + oneHour.getFullYear(), timeString = oneHour.getHours() + ":00";
+            $("#new-task-date").attr("value", dateString);
+            $("#new-task-time").attr("value", timeString);
+            // Set the task description to empty.
+            $("#new-task-description").attr("value", "");
         }
     });
 
@@ -74,16 +88,14 @@ $(function() {
 
     // The date picker inside the dialog
     $("#new-task-date").datepicker();
-    // Set the date and time to 1 hour from now.
-    var curTime = new Date().getTime(), oneHour = new Date(
-            curTime + 60 * 60 * 1000);
-    oneHour.setMinutes(0);
-    oneHour.setSeconds(0);
-    oneHour.setMilliseconds(0);
-    var dateString = (oneHour.getMonth() + 1) + "/" + oneHour.getDate() + "/"
-            + oneHour.getFullYear(), timeString = oneHour.getHours() + ":00";
-    $("#new-task-date").attr("value", dateString);
-    $("#new-task-time").attr("value", timeString);
+    // New task dialog should submit on enter and cancel on escape
+    $("#new-task-dialog").keypress(function(e) {
+        if (e.keyCode == $.ui.keyCode.ENTER) {
+            newTaskDialogOk();
+        } else if (e.keyCoe == $.ui.keyCode.ESCAPE) {
+            newTaskDialogCancel();
+        }
+    });
 });
 
 function resetForm(id) {
