@@ -12,9 +12,6 @@ class TaskHandler(webapp2.RequestHandler):
     def get(self):
         # First, see if the user is logged in
         user = users.get_current_user()
-        if not user:
-          self.error(401)
-          return
         
         # Get the tasks from the database
         tasks = db.GqlQuery("SELECT * "
@@ -59,9 +56,6 @@ class TaskHandler(webapp2.RequestHandler):
     def post(self):
         # First, see if the user is logged in
         user = users.get_current_user()
-        if not user:
-          self.error(401)
-          return
 
         description = self.request.get('description')
         if description is None:
@@ -79,9 +73,6 @@ class TaskHandler(webapp2.RequestHandler):
     def delete(self, taskid=None):
         # First, see if the user is logged in
         user = users.get_current_user()
-        if not user:
-          self.error(401)
-          return
           
         # If no arguments, do something
         if taskid is None:

@@ -23,6 +23,8 @@ handlers:
 
 - url: /task.*
   script: task.app
+  login: required
 
 - url: .*
   script: task_bubbles.app
+  login: required

@@ -10,10 +10,6 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         # First, see if the user is logged in
         user = users.get_current_user()
-        if not user:
-            self.redirect(users.create_login_url(self.request.uri))
-            return
-        
         main_page_path = LOCAL_PATH + "/tasks.html"
         self.response.out.write(file(main_page_path, 'r').read())
 
