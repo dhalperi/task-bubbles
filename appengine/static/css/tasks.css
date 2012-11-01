@@ -20,6 +20,14 @@
   font-size: 62.5%;
 }
 
+#tasks div.logout  {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  color: #ddd;
+  font: 12px sans-serif;
+}
+
 #tasks div.credit  {
   position: absolute;
   left: 4px;
