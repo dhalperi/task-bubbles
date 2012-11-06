@@ -52,7 +52,7 @@ class TaskHandler(webapp2.RequestHandler):
             value = (delta.total_seconds() / first_delta.total_seconds()) ** 0.75
             value = 1.0 / value
             text = t.description
-            out_tasks.append({ "name" : text, "size" : value, "task_id" : str(t.key())})
+            out_tasks.append({ "name" : text, "size" : value, "seconds" : (t.ends - now).total_seconds(), "task_id" : str(t.key())})
         
         self.response.out.write(json.dumps({"name" : "tasks", "children" : out_tasks}))
   

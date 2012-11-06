@@ -23,6 +23,49 @@ d3.json("/task", function(json) {
 	visualizeIt();
 });
 
+function humanizeSeconds(s) {
+    if (s < 0) {
+        return "overdue";
+    }
+    var years = s / (60*60*24*365);
+    if (years > 1) {
+        return "in more than a year";
+    }
+    var months = s / (60*60*24*30);
+    if (months > 1.9) {
+        months = Math.floor(months+0.1);
+        return "in " + months + " months";
+    }
+    if (months > 0.9) {
+        return "in a month";
+    }
+    var weeks = s / (60*60*24*7);
+    if (weeks > 1.9) {
+        weeks = Math.floor(weeks+0.1);
+       return "in " + weeks + " weeks";
+    }
+    if (weeks > 0.9) {
+        return "in a week";
+    }
+    var days = s / (60*60*24);
+    if (days > 1.5) {
+        days = Math.floor(days*10)/10;
+        return "in " + days + " days";
+    }
+    if (days > 0.9) {
+        return "in about a day";
+    }
+    var hours = s / (60*60);
+    if (hours > 1.9) {
+        hours = Math.floor(hours+0.1);
+        return "in " + hours + " hours";
+    }
+    if (hours > 0.9) {
+        return "in an hour";
+    }
+    return "soon";
+}
+
 function redrawVisualization() {
 	d3.json("/task", function(json) {
 		task_list = json;
@@ -69,7 +112,7 @@ function styleNode(node, isTransition) {
     	.attr("id", function(d) { return d.task_id; })
 		.attr("onclick", function(d) { return "completeTask('"+d.task_id+"');"});
 
-    title.text(function(d) { return d.name + "\n<due date>"; });
+    title.text(function(d) { return d.name + "\n" + humanizeSeconds(d.seconds); });
 
 	circle.attr("r", function(d) { return d.r; })
 	    .style("fill", function(d) { return d.children ?
