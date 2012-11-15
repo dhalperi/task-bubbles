@@ -39,20 +39,22 @@ class TaskHandler(webapp2.RequestHandler):
 
         # Earliest ending time    
         now = datetime.datetime.now()
+        one_hour = datetime.timedelta(hours=1)
         first_time = now
         first_delta = first_task.ends - first_time
-        if first_delta.total_seconds() <= 0:
-            one_hour = datetime.timedelta(hours=1)
-            first_time = first_task.ends - one_hour
+        if first_delta.total_seconds() <= one_hour.total_seconds():
             first_delta = one_hour
         
         out_tasks = []
         for t in tasks:
+            seconds = (t.ends - now).total_seconds()
             delta = t.ends - first_time
-            value = (delta.total_seconds() / first_delta.total_seconds()) ** 0.75
-            value = 1.0 / value
+            if delta.total_seconds() <= first_delta.total_seconds():
+              value = 1
+            else:
+              value = (first_delta.total_seconds() / delta.total_seconds()) ** 0.75
             text = t.description
-            out_tasks.append({ "name" : text, "size" : value, "seconds" : (t.ends - now).total_seconds(), "task_id" : str(t.key())})
+            out_tasks.append({ "name" : text, "size" : value, "seconds" : seconds, "task_id" : str(t.key())})
         
         self.response.out.write(json.dumps({"name" : "tasks", "children" : out_tasks}))
   
