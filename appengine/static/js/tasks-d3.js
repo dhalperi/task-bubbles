@@ -21,6 +21,7 @@ var task_list;
 d3.json("/task", function(json) {
 	task_list = json;
 	visualizeIt();
+	d3.timer(scheduleRedrawVisualization, 5 * 60 * 1000);
 });
 
 function humanizeSeconds(s) {
@@ -93,6 +94,18 @@ function redrawVisualization() {
 //		
 //		styleNode(nodes, true);
 	});
+}
+
+function scheduleRedrawVisualization() {
+    redrawVisualization();
+    d3.timer(scheduleRedrawVisualization2, 5 * 60 * 1000);
+    return true;
+}
+
+function scheduleRedrawVisualization2() {
+    redrawVisualization();
+    d3.timer(scheduleRedrawVisualization, 5 * 60 * 1000);
+    return true;
 }
 
 function styleNode(node, isTransition) {
