@@ -18,11 +18,8 @@ var vis = d3.select("#tasks").append("svg")
     .attr("transform", "translate(2, 2)");
 
 var task_list;
-d3.json("/task", function(json) {
-	task_list = json;
-	visualizeIt();
-	setInterval(redrawVisualization, 5 * 60 * 1000);
-});
+drawVisualization(false);
+setInterval(redrawVisualization, 5 * 60 * 1000);
 
 function humanizeSeconds(s) {
     if (s < 0) {
@@ -68,39 +65,39 @@ function humanizeSeconds(s) {
 }
 
 function redrawVisualization() {
-	d3.json("/task", function(json) {
-		task_list = json;
-		
-		vis.selectAll("g.node").data([]).exit().remove();
-		visualizeIt();
+    drawVisualization(true);
+}
 
-//		var nodes = d3.selectAll("g.node").data([task_list]);
-////		
-////		// Remove bad node
-////		vis.selectAll("g.node").filter(function (d) { return d.task_id == id; }).remove();
-////		// Recompute good nodes
-////		var nodes = d3.selectAll("g.node");
-////		nodes = nodes.data([task_list]);
-////		nodes = nodes.selectAll("g.node");
-////		nodes = nodes.data(pack.nodes);
-////		
-//		if (nodes.enter()) {
-//			var node = nodes.enter().append("g");
-//
-//			node.filter(function (d) { return !d.children; }).append("title");
-//			node.append("circle");
-//			node.filter(function (d) { return !d.children; }).append("text");
-//		}
-//		
-//		styleNode(nodes, true);
-	});
+function drawVisualization(isTransition) {
+    d3.json("/task", function(json) {
+        task_list = json;
+        
+        var packNodes = vis.data([task_list]).selectAll("g.node")
+            .data(pack.nodes, function (d) { return d.task_id; });
+    
+        visualizeIt(packNodes, isTransition);
+    });
+}
+
+function visualizeIt(packNodes, isTransition) {
+    // Delete old stuff
+    packNodes.exit().remove();
+    
+    // Add new stuff
+    var newNodes = packNodes
+      .enter().append("g");
+    newNodes.filter(function (d) { return !d.children; }).append("title");
+    newNodes.filter(function (d) { return !d.children; }).append("circle");
+    newNodes.filter(function (d) { return !d.children; }).append("text");
+    
+    styleNode(packNodes, isTransition);
 }
 
 function styleNode(node, isTransition) {
 	root = node;
-	title = node.selectAll("title");
-	circle = node.selectAll("circle");
-	text = node.selectAll("text");
+	title = node.select("title");
+	circle = node.select("circle");
+	text = node.select("text");
 	if (isTransition) {
 		root = root.transition();
 		title = title.transition();
@@ -120,20 +117,8 @@ function styleNode(node, isTransition) {
 		      			   "none" : fill(d.value); });
 	
 	text.attr("text-anchor", "middle")
-	    .attr("dy", "0.5em")
 	    .text(function(d) { return d.name; })
+        .attr("dy", function(d) { return 1.5*(2*d.r)/2/d.name.length + "px";})
 	    .style("font-size", function(d) { return 1.5*(2*d.r)/d.name.length + "px";});
 	
-}
-
-function visualizeIt() {
-	var node = vis.data([task_list]).selectAll("g.node")
-	    .data(pack.nodes)
-	  .enter().append("g");
-	
-	node.filter(function (d) { return !d.children; }).append("title");
-	node.filter(function (d) { return !d.children; }).append("circle");
-	node.filter(function (d) { return !d.children; }).append("text");
-	
-	styleNode(node, false);
 }
