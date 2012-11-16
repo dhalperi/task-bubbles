@@ -93,6 +93,41 @@ function visualizeIt(packNodes, isTransition) {
     styleNode(packNodes, isTransition);
 }
 
+function colorizeSeconds(d) {
+    // No color for root
+    if (d.children) {
+        return none;
+    }
+    
+    // Color in ranges of 1 minute, 1 hour, 3 hours, 1 day, 1 week, 2 weeks, 1 month, 6 months, 1 year, 2 years. 
+    var val = 0;
+    if (d.seconds <= 60) {
+        val = 1;
+    } else if (d.seconds <= 60*60) {
+        val = 1 - 0.1*d.seconds/(60*60); 
+    } else if (d.seconds <= 3*60*60) {
+        val = 0.9 - 0.1 * ((d.seconds - 60*60) / (3*60*60));
+    } else if (d.seconds <= 24*60*60) {
+        val = 0.8 - 0.1 * ((d.seconds - 3*60*60) / (24*60*60));
+    } else if (d.seconds <= 7*24*60*60) {
+        val = 0.7 - 0.1 * ((d.seconds - 24*60*60) / (7*24*60*60));
+    } else if (d.seconds <= 14*24*60*60) {
+        val = 0.6 - 0.1 * ((d.seconds - 7*24*60*60) / (14*24*60*60));
+    } else if (d.seconds <= 28*24*60*60) {
+        val = 0.5 - 0.1 * ((d.seconds - 14*24*60*60) / (28*24*60*60));
+    } else if (d.seconds <= 3*30*24*60*60) {
+        val = 0.4 - 0.1 * ((d.seconds - 28*24*60*60) / (3*30*24*60*60));
+    } else if (d.seconds <= 6*30*24*60*60) {
+        val = 0.3 - 0.1 * ((d.seconds - 3*30*24*60*60) / (6*30*24*60*60));
+    } else if (d.seconds <= 12*30*24*60*60) {
+        val = 0.2 - 0.1 * ((d.seconds - 6*30*24*60*60) / (12*30*24*60*60));
+    } else if (d.seconds <= 24*30*24*60*60) {
+        val = 0.1 - 0.1 * ((d.seconds - 12*30*24*60*60) / (24*30*24*60*60));
+    }
+    
+    return fill(val);
+}
+
 function styleNode(node, isTransition) {
 	root = node;
 	title = node.select("title");
@@ -113,8 +148,7 @@ function styleNode(node, isTransition) {
     title.text(function(d) { return d.name + "\n" + humanizeSeconds(d.seconds); });
 
 	circle.attr("r", function(d) { return d.r; })
-	    .style("fill", function(d) { return d.children ?
-		      			   "none" : fill(d.value); });
+	    .style("fill", colorizeSeconds);
 	
 	text.attr("text-anchor", "middle")
 	    .text(function(d) { return d.name; })
