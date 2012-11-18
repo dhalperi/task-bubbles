@@ -54,7 +54,7 @@ class TaskHandler(webapp2.RequestHandler):
             else:
               value = (first_delta.total_seconds() / delta.total_seconds()) ** 0.75
             text = t.description
-            out_tasks.append({ "name" : text, "size" : value, "seconds" : seconds, "task_id" : str(t.key())})
+            out_tasks.append({"name" : text, "size" : value, "seconds" : seconds, "task_id" : t.key().id()})
         
         self.response.out.write(json.dumps({"name" : "tasks", "children" : out_tasks}))
   
@@ -92,7 +92,7 @@ class TaskHandler(webapp2.RequestHandler):
 
         # If one argument, see if the task exists
         try:
-          task_key = db.Key(encoded=taskid)
+          task_key = db.Key.from_path('Task', int(taskid))
         except db.BadKeyError:
           self.error(404)
           return
@@ -109,4 +109,4 @@ class TaskHandler(webapp2.RequestHandler):
             t.put()
           self.response.set_status(200)
 
-app = webapp2.WSGIApplication([(r'/task/(.*)', TaskHandler), ('/task', TaskHandler)], debug=True)
+app = webapp2.WSGIApplication([(r'/task/(.*)', TaskHandler), ('/task', TaskHandler)], debug=False)
