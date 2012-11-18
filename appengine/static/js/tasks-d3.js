@@ -3,7 +3,7 @@ var width = 640,
     format = d3.format(",d");
 
 var fill = d3.scale.linear()
-    .range(["hsl(-180, 50%, 50%)", "hsl(0, 50%, 50%)"])
+    .range(["hsl(360, 10%, 40%)", "hsl(0, 70%, 60%)"])
     .interpolate(d3.interpolateString);
 
 var pack = d3.layout.pack()
