@@ -17,7 +17,7 @@ class TaskHandler(webapp2.RequestHandler):
           return
         
         # Get the tasks from the database
-        tasks = db.GqlQuery("SELECT * "
+        tasks = db.GqlQuery("SELECT ends, description "
                             "FROM Task "
                             "WHERE user = :1 "
                             "      AND done = FALSE "
@@ -29,7 +29,7 @@ class TaskHandler(webapp2.RequestHandler):
         if first_task is None:
             t1 = Task(user=user, description="Create tasks", ends=datetime.datetime.now())
             t1.put()
-            tasks = db.GqlQuery("SELECT * "
+            tasks = db.GqlQuery("SELECT ends, description "
                                 "FROM Task "
                                 "WHERE user = :1 "
                                 "      AND done = FALSE "
