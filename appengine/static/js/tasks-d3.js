@@ -6,8 +6,18 @@ var fill = d3.scale.linear()
     .range(["hsl(360, 10%, 40%)", "hsl(0, 70%, 60%)"])
     .interpolate(d3.interpolateString);
 
+function sortFunction(a,b) {
+    if (a.size > b.size) {
+        return -1;
+    }
+    if (a.size < b.size) {
+        return 1;
+    }
+    return a.task_id - b.task_id;
+}
+
 var pack = d3.layout.pack()
-    .sort(function (a,b) { return d3.descending(a,b); })
+    .sort(sortFunction)
     .size([width - 4, height - 4])
     .value(function(d) { return d.size; });
 
