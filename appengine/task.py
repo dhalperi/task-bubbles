@@ -6,7 +6,16 @@ from google.appengine.ext import db
 import datetime
 import json
 
-from task_db import Task
+from task_db import Task2, User
+
+
+def get_or_create_user(user):
+    task_user = User.all().filter("user =", user).get()
+    if not task_user:
+        task_user = User(user=user)
+        task_user.put()
+    return task_user
+
 
 class TaskHandler(webapp2.RequestHandler):
     def get(self):
@@ -16,26 +25,24 @@ class TaskHandler(webapp2.RequestHandler):
             self.error(401)
             return
 
+        # See if the user exists in the database
+        task_user = get_or_create_user(user)
+
         # Get the tasks from the database
-        tasks = db.GqlQuery("SELECT ends, description "
-                            "FROM Task "
-                            "WHERE user = :1 "
-                            "      AND done = FALSE "
-                            "ORDER BY ends ASC",
-                            user)
+        tasks = db.GqlQuery("""SELECT ends, description
+                               FROM Task2
+                               WHERE ANCESTOR IS :user
+                                     AND done = FALSE
+                               ORDER BY ends ASC""",
+                            user=task_user)
         first_task = tasks.get()
 
         # If there is no last task, create one
         if first_task is None:
-            t1 = Task(user=user, description="Create tasks", ends=datetime.datetime.now())
+            t1 = Task2(parent=task_user, description="Create a task", ends=datetime.datetime.now())
             t1.put()
-            tasks = db.GqlQuery("SELECT ends, description "
-                                "FROM Task "
-                                "WHERE user = :1 "
-                                "      AND done = FALSE "
-                                "ORDER BY ends ASC LIMIT 1",
-                                user)
-            first_task = tasks.get()
+            first_task = t1
+            tasks = [t1]
 
         # Earliest ending time
         now = datetime.datetime.now()
@@ -73,8 +80,10 @@ class TaskHandler(webapp2.RequestHandler):
         if ends is None:
             self.error(400)
             return
+
         end_time = datetime.datetime.utcfromtimestamp(ends / 1000.0);
-        t = Task(user=user, description=description, ends=end_time)
+        task_user = get_or_create_user(user)
+        t = Task2(parent=task_user, description=description, ends=end_time)
         t.put()
         self.response.set_status(200)
 
@@ -85,6 +94,8 @@ class TaskHandler(webapp2.RequestHandler):
             self.error(401)
             return
 
+        task_user = get_or_create_user(user)
+
         # If no arguments, do something
         if taskid is None:
             self.error(404)
@@ -92,16 +103,13 @@ class TaskHandler(webapp2.RequestHandler):
 
         # If one argument, see if the task exists
         try:
-            task_key = db.Key.from_path('Task', int(taskid))
+            task_key = db.Key.from_path('Task2', int(taskid), parent=task_user.key())
         except db.BadKeyError:
             self.error(404)
             return
-        t = Task.get(task_key)
+        t = Task2.get(task_key)
         if t == None:
             self.error(404)
-            return
-        elif t.user != user:
-            self.error(401)
             return
         else:
             if not t.done:
