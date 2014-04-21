@@ -1,9 +1,11 @@
 from google.appengine.ext import db
 
+
 class User(db.Model):
     """Models a system user"""
     user = db.UserProperty(required=True)
     signup = db.DateTimeProperty(auto_now_add=True)
+
 
 class Task2(db.Model):
     """Models an individual task entry"""

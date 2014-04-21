@@ -39,7 +39,8 @@ class TaskHandler(webapp2.RequestHandler):
 
         # If there is no last task, create one
         if first_task is None:
-            t1 = Task2(parent=task_user, description="Create a task", ends=datetime.datetime.now())
+            t1 = Task2(parent=task_user, description="Create a task",
+                       ends=datetime.datetime.now())
             t1.put()
             first_task = t1
             tasks = [t1]
@@ -59,11 +60,14 @@ class TaskHandler(webapp2.RequestHandler):
             if delta.total_seconds() <= first_delta.total_seconds():
                 value = 1
             else:
-                value = (first_delta.total_seconds() / delta.total_seconds()) ** 0.75
+                value = (first_delta.total_seconds()
+                         / delta.total_seconds()) ** 0.75
             text = t.description
-            out_tasks.append({"name" : text, "size" : value, "seconds" : seconds, "task_id" : t.key().id()})
+            out_tasks.append({"name": text, "size": value,
+                              "seconds": seconds, "task_id": t.key().id()})
 
-        self.response.out.write(json.dumps({"name" : "tasks", "children" : out_tasks}))
+        self.response.out.write(json.dumps({"name": "tasks",
+                                            "children": out_tasks}))
 
     def post(self):
         # First, see if the user is logged in
@@ -81,9 +85,10 @@ class TaskHandler(webapp2.RequestHandler):
             self.error(400)
             return
 
-        end_time = datetime.datetime.utcfromtimestamp(ends / 1000.0);
+        end_time = datetime.datetime.utcfromtimestamp(ends / 1000.0)
         task_user = get_or_create_user(user)
-        t = Task2(parent=task_user, description=description, ends=end_time)
+        t = Task2(parent=task_user, description=description,
+                  ends=end_time)
         t.put()
         self.response.set_status(200)
 
@@ -103,12 +108,13 @@ class TaskHandler(webapp2.RequestHandler):
 
         # If one argument, see if the task exists
         try:
-            task_key = db.Key.from_path('Task2', int(taskid), parent=task_user.key())
+            task_key = db.Key.from_path('Task2', int(taskid),
+                                        parent=task_user.key())
         except db.BadKeyError:
             self.error(404)
             return
         t = Task2.get(task_key)
-        if t == None:
+        if t is None:
             self.error(404)
             return
         else:
@@ -118,4 +124,5 @@ class TaskHandler(webapp2.RequestHandler):
             self.response.set_status(200)
 
 
-app = webapp2.WSGIApplication([(r'/task/(.*)', TaskHandler), ('/task', TaskHandler)], debug=False)
+app = webapp2.WSGIApplication([(r'/task/(.*)', TaskHandler),
+                               ('/task', TaskHandler)], debug=False)

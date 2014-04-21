@@ -1,10 +1,10 @@
-import webapp2
-
 import os
+import webapp2
 
 LOCAL_PATH = os.path.dirname(__file__)
 
 from google.appengine.api import users
+
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
