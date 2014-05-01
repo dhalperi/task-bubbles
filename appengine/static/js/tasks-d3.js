@@ -74,7 +74,9 @@ function drawVisualization(isTransition) {
   d3.json("/task", function(error, json) {
     if (error) {
       console.warn(error);
-      window.location.replace('/');
+      if (error.status == 401) {
+        window.location.replace('/');
+      }
       return;
     }
     task_list = json;
