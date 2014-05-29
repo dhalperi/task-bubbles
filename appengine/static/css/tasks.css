@@ -28,6 +28,14 @@
   font: 10px sans-serif;
 }
 
+#tasks div.logout  {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  color: #ddd;
+  font: 10px sans-serif;
+}
+
 #tasks a {
   color: #fff;
   font-weight: bold;
