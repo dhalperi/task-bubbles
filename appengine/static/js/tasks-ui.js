@@ -84,23 +84,6 @@ $(function() {
     $(this).removeClass('ui-state-hover');
   });
 
-  // Logout Link
-  $('#logout_link').click(function() {
-    if ($.cookie('ACSID')) {
-        // On real server
-        $.removeCookie('ACSID');
-    } else if ($.cookie('dev_appserver_login')) {
-        // On dev appserver
-        $.removeCookie('dev_appserver_login');
-    } else {
-        console.log("Unknown cookie, can't log out");
-        return false;
-    }
-    location.reload();
-    return true;
-  });
-
-
   $("#new-task").button({
     icons : {
       primary : "ui-icon-plus",
