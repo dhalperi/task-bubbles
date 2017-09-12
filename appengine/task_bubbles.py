@@ -26,16 +26,12 @@ class Logout(webapp2.RequestHandler):
             self.redirect(users.create_logout_url(dest_url))
             return
 
-        # We're on the real site. Delete the ACSID and SACSID cookies
-        cookie = Cookie.SimpleCookie()
-        cookie['ACSID'] = ''
-        cookie['ACSID']['expires'] = -86400  # In the past, a day ago.
-        self.response.headers.add_header(*cookie.output().split(': ', 1))
-        cookie = Cookie.SimpleCookie()
-        cookie['SACSID'] = ''
-        cookie['SACSID']['expires'] = -86400  # In the past, a day ago.
-        self.response.headers.add_header(*cookie.output().split(': ', 1))
-        self.redirect(dest_url)
+        # We're on the real site. Let the user choose what account they
+        # want signed in, by replacing the passive=true parameter with
+        # false.
+        url = users.create_login_url()
+        url = url.replace("passive=true", "passive=false")
+        self.redirect(url)
         return
 
 app = webapp2.WSGIApplication([('/', MainPage), ('/logout', Logout)],
