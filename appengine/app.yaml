@@ -7,26 +7,40 @@ handlers:
   expiration: "7d"
   static_files: static/favicon.ico
   upload: static/favicon\.ico
+  secure: always
+  redirect_http_response_code: 301
 
 - url: /img
   expiration: "7d"
   static_dir: static/images
+  secure: always
+  redirect_http_response_code: 301
 
 - url: /robots\.txt
   expiration: "7d"
   static_files: static/robots.txt
   upload: static/robots\.txt
+  secure: always
+  redirect_http_response_code: 301
 
 - url: /css
   expiration: "1d"
   static_dir: static/css
+  secure: always
+  redirect_http_response_code: 301
 
 - url: /js
   expiration: "1d"
   static_dir: static/js
+  secure: always
+  redirect_http_response_code: 301
 
 - url: /task.*
   script: task.app
+  secure: always
+  redirect_http_response_code: 301
 
 - url: .*
   script: task_bubbles.app
+  secure: always
+  redirect_http_response_code: 301
